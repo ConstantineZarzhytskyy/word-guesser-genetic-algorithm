@@ -8,7 +8,7 @@ class WordGuesser
   MUTATION_CHANCE = 1 # percent
 
   # Method to run the genetic algorithm
-  # It uses tournament selection without eletism to generate the next population of genomes
+  # It uses tournament selection to generate the next population of genomes
   def run(word="hello")
     @word = word.split('')
     seed_genome
@@ -19,7 +19,8 @@ class WordGuesser
       @tmp_new = []
       # Do the tournament selection, just take the most winning member of every 2.
       @genomes.each_slice(2){ |a,b| @tmp_new << (fitness(a)<=fitness(b) ? a : b) }
-      # if you wanted to introduce elitism, you could sort @tmp_new and take the 2 best of the population here
+      # take the 2 most best candidates from the population and preserve them into the next round
+      @new_genomes = @tmp_new.sort{ |a,b| fitness(a) <=> fitness(b) }[(0..1)]
       # Loop until we fill our new population with the target genomes.
       while(@new_genomes.length < GENOME_AMOUNTS)
         @new_genomes << crossover(@tmp_new[rand(@tmp_new.length-1)], @tmp_new[rand(@tmp_new.length-1)])
